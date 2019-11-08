@@ -16,7 +16,35 @@ class _MainFeed extends State<MainFeed> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("Instagram", style: TextStyle(fontFamily: 'Billabong'),),
+        leading: Icon(Icons.camera_alt),
+      
+
+
+
+
+        centerTitle: true,
+        title: Text("Instagram", style: TextStyle(fontFamily: 'Billabong', fontSize: 35),),
+        backgroundColor: Colors.black,
+
+
+
+
+        actions: <Widget>[
+            // action button
+            IconButton(
+              icon: Icon(Icons.live_tv),
+              onPressed: () {
+              },
+            ),
+            // action button
+            IconButton(
+              icon: Icon(Icons.send),
+              onPressed: () {
+            
+              },
+            ),
+            // overflow men
+          ],
       ),
       body: ListView.builder(
         //change to timeline.length to show everyones post

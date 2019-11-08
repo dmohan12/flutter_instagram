@@ -75,7 +75,7 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
 
 
-fonts:
-     - family: Billabong
-       fonts:
-         - asset: fonts/Billabong.ttf
+  fonts:
+    - family: Billabong
+      fonts:
+        - asset: fonts/Billabong.ttf
