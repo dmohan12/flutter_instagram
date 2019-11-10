@@ -105,7 +105,7 @@ class InstagramBloc extends ChangeNotifier {
 
       print("getting account posts");
       var my_posts_response = await http.get(
-          "https://nameless-escarpment-45560.herokuapp.com/api/v1/my_posts",
+          "https://nameless-escarpment-45560.herokuapp.com/api/v1/users/${25}/posts",
           headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
       if (my_posts_response.statusCode == 200) {
         print("successfully got account posts");

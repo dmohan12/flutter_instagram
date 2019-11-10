@@ -40,33 +40,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
 
-        /*ListView.builder(
-        //change to timeline.length to show everyones post
-        itemCount: bloc.timeline.length,
-        itemBuilder: (_, i) {
-          Post p = bloc.timeline[i];
-          return ShowPost(p);
-        },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            title: Text('Home'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            title: Text('Business'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            title: Text("sdsd"),
-          ),
-        ],
-        //currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        // onTap: _onItemTapped,
-      ),*/
+     
       ),
       bottomNavigationBar: new BottomNavigationBar(
         currentIndex: index,
