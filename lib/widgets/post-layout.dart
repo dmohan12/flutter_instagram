@@ -5,6 +5,7 @@ import 'package:instagram_clone/models/comment.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:instagram_clone/screens/userscreens.dart';
+import 'package:instagram_clone/widgets/showComment.dart';
 import 'dart:io';
 import 'dart:convert';
 
@@ -13,7 +14,7 @@ import 'package:provider/provider.dart';
 class ShowPost extends StatefulWidget {
   Post post;
   List<Post> items;
-  List<Comment> comments;;
+  List<Comment> comments;
 
   ShowPost(this.post);
 
@@ -31,11 +32,39 @@ class _ShowPostState extends State<ShowPost> {
       return image_url;
   }
 
-  @override
-  void initState() {
-    getComments(widget.post.id);
-    //print(widget.comments.length);
+ void postComment(String comment) async {
+    if (comment.length != 0) {
+      // var response= await http
+    }
   }
+
+  Future<void> getComments(int id) async {
+    InstagramBloc bloc = Provider.of<InstagramBloc>(context);
+
+    var response = await http.get(
+        'https://nameless-escarpment-45560.herokuapp.com/api/v1/posts/${id}/comments',
+        headers: {HttpHeaders.authorizationHeader: "Bearer ${bloc.token}"});
+    if (response.statusCode == 200) {
+      List<dynamic> serverPosts = json.decode(response.body);
+      // for (int i = 0; i < serverPosts.length; i++) {
+      //   widget.items.add(Post.fromJson(serverPosts[i]));
+
+      // }
+      
+      widget.comments = serverPosts.map((p) => Comment.fromJson(p)).toList();
+      //  for (int i = 0; i < serverPosts.length; i++) {
+      //    widget.comments.add(serverPosts[i]);
+      //    print("Item: "+i.toString());
+      //  }
+      // print("Got user postsss: ${widget.items.length}");
+    }
+  }
+
+  // @override
+  // void initState(){
+  //     getComments(widget.post.id);
+  //   //print(widget.comments.length);
+  // }
 
   Future<void> getUserPost(int id, String token) async {
     var response = await http.get(
@@ -56,32 +85,7 @@ class _ShowPostState extends State<ShowPost> {
     }
   }
 
-  void postComment(String comment) async {
-    if (comment.length != 0) {
-      // var response= await http
-    }
-  }
-
-  void getComments(int id) async {
-    InstagramBloc bloc = Provider.of<InstagramBloc>(context);
-
-    var response = await http.get(
-        'https://nameless-escarpment-45560.herokuapp.com/api/v1/posts/${id}/comments',
-        headers: {HttpHeaders.authorizationHeader: "Bearer ${bloc.token}"});
-
-    if (response.statusCode == 200) {
-      List<dynamic> serverPosts = json.decode(response.body);
-      // for (int i = 0; i < serverPosts.length; i++) {
-      //   widget.items.add(Post.fromJson(serverPosts[i]));
-
-      // }
-      widget.comments = serverPosts.map((p) => Comment.fromJson(p)).toList();
-      // for (int i = 0; i < serverPosts.length; i++) {
-      //   widget.comments.add(serverPosts[i]);
-      // }
-      // print("Got user postsss: ${widget.items.length}");
-    }
-  }
+ 
 
   Future<void> deletePost(int id) async {
     InstagramBloc bloc = Provider.of<InstagramBloc>(context);
@@ -226,6 +230,24 @@ class _ShowPostState extends State<ShowPost> {
               ],
             ),
           ),
+
+
+            RaisedButton(child: Text("Comments"),
+            onPressed: ()async{
+                await getComments(widget.post.id);
+
+                //showComments(widget.comments);
+
+                  Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => showComments(widget.comments),
+                          ),
+                        );
+
+            },)
+          //showComments(widget.comments),
+          //Text(widget.comments.length.toString()),
 
 
         ],

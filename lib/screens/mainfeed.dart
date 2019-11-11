@@ -60,11 +60,11 @@ class _MainFeed extends State<MainFeed> {
       ),
       body: ListView.builder(
         //change to timeline.length to show everyones post
-        itemCount: bloc.timeline.length,
+        itemCount: bloc.my_posts.length,
         itemBuilder: (_, i) {
 
           
-          Post p = bloc.timeline[i];
+          Post p = bloc.my_posts[i];
           return ShowPost(p);
 
 
