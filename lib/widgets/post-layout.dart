@@ -6,6 +6,8 @@ import 'package:instagram_clone/models/comment.dart';
 import 'package:http/http.dart' as http;
 import 'package:instagram_clone/screens/userscreens.dart';
 import 'package:instagram_clone/widgets/showComment.dart';
+import 'package:instagram_clone/screens/commentspage2.dart';
+
 import 'dart:io';
 import 'dart:convert';
 
@@ -23,6 +25,7 @@ class ShowPost extends StatefulWidget {
 }
 
 class _ShowPostState extends State<ShowPost> {
+
   String checkProfileImage(String image_url) {
     if (image_url == null) {
       String placeholder =
@@ -212,7 +215,15 @@ class _ShowPostState extends State<ShowPost> {
               ],
             ),
           ),
-          Text(widget.post.likes_count.toString()),
+          Container( 
+            padding: EdgeInsets.only(left: 20, bottom: 10),
+            child:Align(
+            alignment: Alignment.centerLeft,
+            child:Text(widget.post.likes_count.toString()+" likes",style: TextStyle(color: Colors.white), ),
+ 
+          ),),
+      
+         
           Container(
             padding: EdgeInsets.only(bottom: 20, left: 20),
             alignment: Alignment.centerLeft,
@@ -241,7 +252,7 @@ class _ShowPostState extends State<ShowPost> {
                   Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => showComments(widget.comments),
+                            builder: (context) => showComments(widget.comments,widget.post),
                           ),
                         );
 
