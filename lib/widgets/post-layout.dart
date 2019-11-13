@@ -25,7 +25,6 @@ class ShowPost extends StatefulWidget {
 }
 
 class _ShowPostState extends State<ShowPost> {
-
   String checkProfileImage(String image_url) {
     if (image_url == null) {
       String placeholder =
@@ -35,7 +34,7 @@ class _ShowPostState extends State<ShowPost> {
       return image_url;
   }
 
- void postComment(String comment) async {
+  void postComment(String comment) async {
     if (comment.length != 0) {
       // var response= await http
     }
@@ -53,7 +52,7 @@ class _ShowPostState extends State<ShowPost> {
       //   widget.items.add(Post.fromJson(serverPosts[i]));
 
       // }
-      
+
       widget.comments = serverPosts.map((p) => Comment.fromJson(p)).toList();
       //  for (int i = 0; i < serverPosts.length; i++) {
       //    widget.comments.add(serverPosts[i]);
@@ -88,8 +87,6 @@ class _ShowPostState extends State<ShowPost> {
     }
   }
 
- 
-
   Future<void> deletePost(int id) async {
     InstagramBloc bloc = Provider.of<InstagramBloc>(context);
 
@@ -108,6 +105,50 @@ class _ShowPostState extends State<ShowPost> {
         bloc.notifyListeners();
       }
     }
+  }
+
+
+  void likePost(int id)async
+  {
+    InstagramBloc bloc = Provider.of<InstagramBloc>(context);
+
+    var response=await http.post('https://nameless-escarpment-45560.herokuapp.com/api/v1/posts/${id}/likes',
+    headers: {HttpHeaders.authorizationHeader: "Bearer ${bloc.token}"});
+
+    if(response.statusCode==200)
+    {
+      print("post LIKED");
+    }
+  }
+
+   void dislikePost(int id)async
+  {
+    InstagramBloc bloc = Provider.of<InstagramBloc>(context);
+
+    var response=await http.delete('https://nameless-escarpment-45560.herokuapp.com/api/v1/posts/${id}/likes',
+    headers: {HttpHeaders.authorizationHeader: "Bearer ${bloc.token}"});
+
+    if(response.statusCode==200)
+    {
+      print("LIKED removed");
+    }
+  }
+
+  List<Color> _colors = [
+    //Get list of colors
+
+    Colors.white,
+    Colors.red,
+  ];
+
+  int currentIndex = 0;
+
+  int liked()
+  {
+    if(widget.post.liked==true)
+      return 1;
+    else
+      return 0;
   }
 
   //int x=widget.post.user_id;
@@ -199,8 +240,25 @@ class _ShowPostState extends State<ShowPost> {
               children: <Widget>[
                 IconButton(
                   icon: Icon(Icons.favorite),
-                  color: Colors.red,
-                  onPressed: () {},
+                  color: _colors[liked()],
+                  onPressed: () {
+                    if (widget.post.liked == false) {
+                      widget.post.liked = true;
+                      currentIndex = 1;
+                      likePost(widget.post.id);
+                      widget.post.likes_count++;
+                      bloc.notifyListeners();
+                    } else {
+                      widget.post.liked = false;
+                      currentIndex = 0;
+                      dislikePost(widget.post.id);
+                      widget.post.likes_count--;
+                      bloc.notifyListeners();
+
+                    }
+
+                    setState(() {});
+                  },
                 ),
                 IconButton(
                   icon: Icon(Icons.chat_bubble_outline),
@@ -215,15 +273,17 @@ class _ShowPostState extends State<ShowPost> {
               ],
             ),
           ),
-          Container( 
+          Container(
             padding: EdgeInsets.only(left: 20, bottom: 10),
-            child:Align(
-            alignment: Alignment.centerLeft,
-            child:Text(widget.post.likes_count.toString()+" likes",style: TextStyle(color: Colors.white), ),
- 
-          ),),
-      
-         
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                widget.post.likes_count.toString() + " likes",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+
           Container(
             padding: EdgeInsets.only(bottom: 20, left: 20),
             alignment: Alignment.centerLeft,
@@ -242,25 +302,24 @@ class _ShowPostState extends State<ShowPost> {
             ),
           ),
 
+          RaisedButton(
+            child: Text("Comments"),
+            onPressed: () async {
+              await getComments(widget.post.id);
 
-            RaisedButton(child: Text("Comments"),
-            onPressed: ()async{
-                await getComments(widget.post.id);
+              //showComments(widget.comments);
 
-                //showComments(widget.comments);
-
-                  Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => showComments(widget.comments,widget.post),
-                          ),
-                        );
-
-            },)
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      showComments(widget.comments, widget.post),
+                ),
+              );
+            },
+          )
           //showComments(widget.comments),
           //Text(widget.comments.length.toString()),
-
-
         ],
       ),
     );

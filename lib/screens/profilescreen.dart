@@ -18,27 +18,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
 
-      appBar: AppBar(
-        leading: Icon(Icons.camera_alt),
-        centerTitle: true,
-        title: Text(
-          "Instagram",
-          style: TextStyle(fontFamily: 'Billabong', fontSize: 35),
+       appBar: AppBar(title: Text("Instagram"),
+       backgroundColor: Colors.black,
+      
+      actions: <Widget>[
+        Padding(padding: EdgeInsets.only(right: 40),),
+        IconButton(icon: Icon(Icons.settings),
+        onPressed: (){
+         
+          Navigator.push(context, 
+          MaterialPageRoute(builder: (context) => Settings()),);
+        },
+        
         ),
-        backgroundColor: Colors.black,
-        actions: <Widget>[
-          // action button
-          IconButton(
-            icon: Icon(Icons.live_tv),
-            onPressed: () {},
-          ),
-          // action button
-          IconButton(
-            icon: Icon(Icons.send),
-            onPressed: () {},
-          ),
-          // overflow men
-        ],
+      ],
       ),
     body: ListView.builder(
       //change to timeline.length to show everyones post
