@@ -6,7 +6,6 @@ import 'package:instagram_clone/models/comment.dart';
 import 'package:http/http.dart' as http;
 import 'package:instagram_clone/screens/userscreens.dart';
 import 'package:instagram_clone/widgets/showComment.dart';
-import 'package:instagram_clone/screens/commentspage2.dart';
 
 import 'dart:io';
 import 'dart:convert';
@@ -107,29 +106,26 @@ class _ShowPostState extends State<ShowPost> {
     }
   }
 
-
-  void likePost(int id)async
-  {
+  void likePost(int id) async {
     InstagramBloc bloc = Provider.of<InstagramBloc>(context);
 
-    var response=await http.post('https://nameless-escarpment-45560.herokuapp.com/api/v1/posts/${id}/likes',
-    headers: {HttpHeaders.authorizationHeader: "Bearer ${bloc.token}"});
+    var response = await http.post(
+        'https://nameless-escarpment-45560.herokuapp.com/api/v1/posts/${id}/likes',
+        headers: {HttpHeaders.authorizationHeader: "Bearer ${bloc.token}"});
 
-    if(response.statusCode==200)
-    {
+    if (response.statusCode == 200) {
       print("post LIKED");
     }
   }
 
-   void dislikePost(int id)async
-  {
+  void dislikePost(int id) async {
     InstagramBloc bloc = Provider.of<InstagramBloc>(context);
 
-    var response=await http.delete('https://nameless-escarpment-45560.herokuapp.com/api/v1/posts/${id}/likes',
-    headers: {HttpHeaders.authorizationHeader: "Bearer ${bloc.token}"});
+    var response = await http.delete(
+        'https://nameless-escarpment-45560.herokuapp.com/api/v1/posts/${id}/likes',
+        headers: {HttpHeaders.authorizationHeader: "Bearer ${bloc.token}"});
 
-    if(response.statusCode==200)
-    {
+    if (response.statusCode == 200) {
       print("LIKED removed");
     }
   }
@@ -143,9 +139,8 @@ class _ShowPostState extends State<ShowPost> {
 
   int currentIndex = 0;
 
-  int liked()
-  {
-    if(widget.post.liked==true)
+  int liked() {
+    if (widget.post.liked == true)
       return 1;
     else
       return 0;
@@ -254,7 +249,6 @@ class _ShowPostState extends State<ShowPost> {
                       dislikePost(widget.post.id);
                       widget.post.likes_count--;
                       bloc.notifyListeners();
-
                     }
 
                     setState(() {});
@@ -302,22 +296,44 @@ class _ShowPostState extends State<ShowPost> {
             ),
           ),
 
-          RaisedButton(
-            child: Text("Comments"),
-            onPressed: () async {
-              await getComments(widget.post.id);
+          Container(
+            alignment: Alignment.centerLeft,
+              padding: EdgeInsets.only(left: 20, bottom: 20),
+              child: InkWell(
+                onTap: () async {
+                  await getComments(widget.post.id);
 
-              //showComments(widget.comments);
+                  //showComments(widget.comments);
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      showComments(widget.comments, widget.post),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          showComments(widget.comments, widget.post),
+                    ),
+                  );
+                },
+                child: Text(
+                  "Comments",
+                  style: TextStyle(color: Colors.white),
                 ),
-              );
-            },
-          )
+              )),
+          // RaisedButton(
+          //   child: Text("Comments"),
+          //   onPressed: () async {
+          //     await getComments(widget.post.id);
+
+          //     //showComments(widget.comments);
+
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) =>
+          //             showComments(widget.comments, widget.post),
+          //       ),
+          //     );
+          //   },
+          // )
           //showComments(widget.comments),
           //Text(widget.comments.length.toString()),
         ],

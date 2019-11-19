@@ -66,8 +66,6 @@ class _MainFeed extends State<MainFeed> {
           
           Post p = bloc.timeline[i];
           return ShowPost(p);
-
-
         },
       ),
     );

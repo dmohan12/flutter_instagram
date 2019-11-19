@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/blocs/instagrambloc.dart';
 import 'package:instagram_clone/models/post.dart';
 import 'package:instagram_clone/models/comment.dart';
+import 'package:instagram_clone/screens/addcommentscreen.dart';
 
 import 'package:instagram_clone/widgets/post-layout.dart';
 import 'package:http/http.dart' as http;
@@ -23,7 +24,17 @@ class showComments extends StatefulWidget {
 class _showCommentsState extends State<showComments> {
   @override
   void initState() {
+    super.initState();
     //widget.comments.removeWhere((text)=> text.text == null);
+  }
+
+    String checkProfileImage(String image_url) {
+    if (image_url == null) {
+      String placeholder =
+          "http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder-300x300.png";
+      return placeholder;
+    } else
+      return image_url;
   }
 
   Future<void> postComment(String text) async {
@@ -50,24 +61,18 @@ class _showCommentsState extends State<showComments> {
     }
   }
 
-  Future<void> deleteComment(int id)async{
+  Future<void> deleteComment(int id) async {
     InstagramBloc bloc = Provider.of<InstagramBloc>(context);
 
-    var response= await http.delete('https://nameless-escarpment-45560.herokuapp.com/api/v1/comments/${id}',
-    headers: {HttpHeaders.authorizationHeader: "Bearer ${bloc.token}"}
-    );
+    var response = await http.delete(
+        'https://nameless-escarpment-45560.herokuapp.com/api/v1/comments/${id}',
+        headers: {HttpHeaders.authorizationHeader: "Bearer ${bloc.token}"});
 
-    if(response.statusCode==202)
-    {
+    if (response.statusCode == 202) {
       print("Comment deleted");
-      widget.comments.removeWhere((comment) => comment.id==id);
-
-
-
+      widget.comments.removeWhere((comment) => comment.id == id);
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -84,115 +89,110 @@ class _showCommentsState extends State<showComments> {
                 Icons.add_comment,
                 color: Colors.white,
               ),
-              onPressed: () {
+              onPressed: () async {
                 //add pop up box and to add comment
 
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    TextEditingController item = TextEditingController();
-                    // return object of type Dialog
-                    return AlertDialog(
-                      title: new Text("Create Reminder"),
-                      content: new Row(
-                        children: <Widget>[
-                          new Expanded(
-                            child: new TextField(
-                              controller: item,
-                              decoration: new InputDecoration(
-                                  hintText: 'Enter ToDo Item'),
-                            ),
-                          ),
-                        ],
-                      ),
-                      actions: <Widget>[
-                        FlatButton(
-                          child: Text(
-                            "Create",
-                            style: TextStyle(fontSize: 24),
-                          ),
-                          onPressed: () async {
-                            await postComment(item.text);
-
-                            // await addItem(item.text,widget.token);
-
-                          },
-                        ),
-                      ],
-                    );
-                  },
+                widget.comments = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddComment(widget.p)),
                 );
+
+                setState(() {});
+
+                // showDialog(
+                //   context: context,
+                //   builder: (BuildContext context) {
+                //     TextEditingController item = TextEditingController();
+                //     // return object of type Dialog
+                //     return AlertDialog(
+                //       title: new Text("Create Reminder"),
+                //       content: new Row(
+                //         children: <Widget>[
+                //           new Expanded(
+                //             child: new TextField(
+                //               controller: item,
+                //               decoration: new InputDecoration(
+                //                   hintText: 'Enter ToDo Item'),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //       actions: <Widget>[
+                //         FlatButton(
+                //           child: Text(
+                //             "Create",
+                //             style: TextStyle(fontSize: 24),
+                //           ),
+                //           onPressed: () async {
+                //             await postComment(item.text);
+
+                //             // await addItem(item.text,widget.token);
+                //           },
+                //         ),
+                //       ],
+                //     );
+                //   },
+                // );
               },
             ),
           ]),
-      body: ListView.builder(
-        itemCount: widget.comments.length,
-        itemBuilder: (_, i) {
-          Comment c = widget.comments[i];
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+              itemCount: widget.comments.length,
+              itemBuilder: (_, i) {
+                Comment c = widget.comments[i];
 
-          return Dismissible(
+                return Dismissible(
                   key: Key(UniqueKey().toString()),
                   background: Container(color: Colors.red),
                   direction: DismissDirection.endToStart,
-                  onDismissed: (direction)  {
+                  onDismissed: (direction) {
                     //await deleteItem(item.id, widget.token);
                     // add delete comment functio here
 
-
-                    setState(() async{
-                    await deleteComment(c.id);
-
-                    });
+                    if (c.user_id == bloc.myAccount.id) {
+                      setState(() async {
+                        await deleteComment(c.id);
+                      });
+                    }
 
                     Scaffold.of(context).showSnackBar(
                         SnackBar(content: Text("${c.text} dismissed")));
                   },
-                  
-        
                   child: ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(bloc.timeline
-                  .firstWhere(
-                      (item) => item.user_id == widget.comments[i].user_id)
-                  .profile_image_url),
-            ),
-            title: Wrap(
-              children: <Widget>[
-                Text(c.text),
-              ],
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(checkProfileImage(bloc.timeline
+                          .firstWhere((item) =>
+                              item.user_id == widget.comments[i].user_id)
+                          .profile_image_url) ),
+                    ),
+                    title: Wrap(
+                      children: <Widget>[
+                        Text(c.text),
+                      ],
+                    ),
+                  ),
+                );
+
+                // ListTile(
+                //   leading: CircleAvatar(
+                //     backgroundImage: NetworkImage(bloc.timeline
+                //         .firstWhere(
+                //             (item) => item.user_id == widget.comments[i].user_id)
+                //         .profile_image_url),
+                //   ),
+                //   title: Wrap(
+                //     children: <Widget>[
+                //       Text(c.text),
+                //     ],
+                //   ),
+                // );
+              },
             ),
           ),
-                );
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          // ListTile(
-          //   leading: CircleAvatar(
-          //     backgroundImage: NetworkImage(bloc.timeline
-          //         .firstWhere(
-          //             (item) => item.user_id == widget.comments[i].user_id)
-          //         .profile_image_url),
-          //   ),
-          //   title: Wrap(
-          //     children: <Widget>[
-          //       Text(c.text),
-          //     ],
-          //   ),
-          // );
-        },
+        ],
       ),
     );
   }

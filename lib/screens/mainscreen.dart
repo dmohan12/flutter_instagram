@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/blocs/instagrambloc.dart';
 import 'package:instagram_clone/models/post.dart';
+import 'package:instagram_clone/screens/addpostscreen.dart';
 import 'package:instagram_clone/screens/mainfeed.dart';
 import 'package:instagram_clone/screens/profilescreen.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,6 @@ class _MainScreenState extends State<MainScreen> {
     InstagramBloc bloc = Provider.of<InstagramBloc>(context);
     return Scaffold(
       backgroundColor: Colors.black,
-    
       body: new Stack(
         children: <Widget>[
           new Offstage(
@@ -33,16 +33,22 @@ class _MainScreenState extends State<MainScreen> {
             offstage: index != 1,
             child: new TickerMode(
               enabled: index == 1,
+              child: new MaterialApp(home: AddPost()),
+            ),
+          ),
+          new Offstage(
+            offstage: index != 2,
+            child: new TickerMode(
+              enabled: index == 2,
               child: new MaterialApp(
                 home: new ProfileScreen(),
               ),
             ),
           ),
         ],
-
-     
       ),
       bottomNavigationBar: new BottomNavigationBar(
+        backgroundColor: Colors.black,
         currentIndex: index,
         onTap: (int index) {
           setState(() {
@@ -51,12 +57,26 @@ class _MainScreenState extends State<MainScreen> {
         },
         items: <BottomNavigationBarItem>[
           new BottomNavigationBarItem(
-            icon: new Icon(Icons.home),
-            title: new Text("Home"),
+            icon: new Icon(
+              Icons.home,
+              color: Colors.white,
+            ),
+            title: new Text("Home", style: TextStyle(color: Colors.white)),
           ),
           new BottomNavigationBarItem(
-            icon: new Icon(Icons.assignment_ind),
-            title: new Text("My Profile"),
+            icon: new Icon(
+              Icons.queue,
+              color: Colors.white,
+            ),
+            title: new Text("Add", style: TextStyle(color: Colors.white)),
+          ),
+          new BottomNavigationBarItem(
+            icon: new Icon(
+              Icons.assignment_ind,
+              color: Colors.white,
+            ),
+            title:
+                new Text("My Profile", style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
